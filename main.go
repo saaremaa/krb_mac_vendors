@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -49,9 +50,16 @@ func main() {
 		logrus.Fatalf("%s \n", err)
 	}
 
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
+
 	if mac.valid {
 		vendors := make(map[string]string)
-		filename := "./macdb/oui.csv"
+
+		filename := fmt.Sprintf("%s/macdb/oui.csv", exPath)
 
 		// Open CSV file
 		f, err := os.Open(filename)
