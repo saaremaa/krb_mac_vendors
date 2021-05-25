@@ -1,15 +1,18 @@
 package main
 
 import (
+	"embed"
 	"encoding/csv"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/sirupsen/logrus"
 )
+
+//go:embed macdb/oui.csv
+var OUI embed.FS
 
 type macAddress struct {
 	value string
@@ -50,19 +53,11 @@ func main() {
 		logrus.Fatalf("%s \n", err)
 	}
 
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	exPath := filepath.Dir(ex)
-
 	if mac.valid {
 		vendors := make(map[string]string)
 
-		filename := fmt.Sprintf("%s/macdb/oui.csv", exPath)
-
 		// Open CSV file
-		f, err := os.Open(filename)
+		f, err := OUI.Open("macdb/oui.csv")
 		if err != nil {
 			logrus.Fatalf("%s \n", err)
 		}
